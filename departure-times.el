@@ -119,7 +119,12 @@
           (goto-char (point-min)))))
     (pop-to-buffer buffer-name)))
 
-;; (departure-times-show-departures)
+(defmacro comment (&rest _body)
+  "Ignore body expressions. For temporary commenting of code blocks."
+  nil)
+
+(comment
+ (departure-times-show-departures))
 
 (provide 'departure-times)
 ;;; departure-times.el ends here
