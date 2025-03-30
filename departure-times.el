@@ -47,13 +47,13 @@
 ;;   aimedDepartureTime
 ;; }
 
-(defun departure-times--fetch-departure-times (stop)
-  "Fetch departure times for STOP."
+(defun departure-times--fetch-departure-times (stop-id)
+  "Fetch departure times for STOP-ID."
   (let* ((url-request-method "POST")
          (url "https://api.entur.io/journey-planner/v3/graphql")
          (url-request-extra-headers '(("Et-Client-Name" . "emacs-departure-times")
                                       ("Content-Type" . "application/json")))
-         (query (format "{ stopPlace(id: \"NSR:StopPlace:%s\") { id name estimatedCalls(timeRange: 72100, numberOfDepartures: 10) { realtime expectedDepartureTime forBoarding destinationDisplay { frontText } serviceJourney { journeyPattern { line { id name transportMode } } } aimedDepartureTime } } }" stop))
+         (query (format "{ stopPlace(id: \"%s\") { id name estimatedCalls(timeRange: 72100, numberOfDepartures: 10) { realtime expectedDepartureTime forBoarding destinationDisplay { frontText } serviceJourney { journeyPattern { line { id name transportMode } } } aimedDepartureTime } } }" stop-id))
          (url-request-data (json-encode `(("query" . ,query))))
          (buffer (url-retrieve-synchronously url)))
     (when buffer
@@ -84,8 +84,8 @@
 
 (defun departure-time--select-stop ()
   "Select stop."
-  (let* ((choices '(("Klosterheim" . "6111")
-                    ("Bryn skole" . "6114")))
+  (let* ((choices '(("Klosterheim" . "NSR:StopPlace:6111")
+                    ("Bryn skole" . "NSR:StopPlace:6114")))
          (selection (completing-read "Select stop: " choices nil t)))
     (cdr (assoc selection choices))))
 
@@ -102,7 +102,7 @@ With a prefix ARG, select a new station."
   ;; Bryn skole 6114
   (let* ((stop (if (/= arg 1)
                    (departure-time--select-stop)
-                 "337"))
+                 "NSR:StopPlace:337"))
          (buffer-name "*Departure times*")
          (departures (departure-times--fetch-departure-times stop)))
     (with-current-buffer-window buffer-name nil nil
