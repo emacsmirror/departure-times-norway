@@ -67,7 +67,6 @@
 (defun departure-times--format-time (iso-time)
   "Format ISO-TIME as local time."
   (let* ((decoded-time (iso8601-parse iso-time)))
-    (message (format "%s" decoded-time))
     (format-time-string "%H:%M:%S" (apply 'encode-time decoded-time))))
 
 (defun departure-times--format-mode (mode)
