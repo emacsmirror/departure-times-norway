@@ -82,15 +82,27 @@
   "Get line number from LINE-ID."
   (car (last (split-string line-id ":"))))
 
-(defun departure-times-show-departures ()
-  "Show departure times for a preset stop."
-  (interactive)
+(defun departure-time--select-stop ()
+  "Select stop."
+  (let* ((choices '(("Klosterheim" . "6111")
+                    ("Bryn skole" . "6114")))
+         (selection (completing-read "Select stop: " choices nil t)))
+    (cdr (assoc selection choices))))
+
+(defun departure-times-show-departures (arg)
+  "Show departure times for a preset stop.
+
+With a prefix ARG, select a new station."
+  (interactive "p")
+
   ;; Example stops:
   ;; Oslo S 337
   ;; Jernbanetorget 3978, 3986, 3990, 3995, 4000, 4004, 4013, 59734, 61733, 62091, 62122
   ;; Klosterheim 6111
   ;; Bryn skole 6114
-  (let* ((stop "6111")
+  (let* ((stop (if (/= arg 1)
+                   (departure-time--select-stop)
+                 "337"))
          (buffer-name "*Departure times*")
          (departures (departure-times--fetch-departure-times stop)))
     (with-current-buffer-window buffer-name nil nil
