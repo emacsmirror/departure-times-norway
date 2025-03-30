@@ -153,11 +153,11 @@ With a prefix ARG, select a new station."
           (goto-char (point-min)))))
     (pop-to-buffer buffer-name)))
 
-(defmacro comment (&rest _body)
+(defmacro departure-times--comment (&rest _body)
   "Ignore body expressions. For temporary commenting of code blocks."
   nil)
 
-(comment
+(departure-times--comment
  (departure-times-show-departures))
 
 (provide 'departure-times)
