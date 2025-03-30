@@ -47,6 +47,30 @@
 ;;   aimedDepartureTime
 ;; }
 
+(defun departure-times--search-stops (string)
+  "Search for stop names that contain STRING with EnTur API."
+  (let* ((url-request-method "GET")
+         (url (format "https://api.entur.io/geocoder/v1/autocomplete?text=%s&lang=en" string))
+         (url-request-extra-headers '(("Et-Client-Name" . "emacs-departure-times")))
+         (buffer (url-retrieve-synchronously url)))
+    (when buffer
+      (with-current-buffer buffer
+        (goto-char (point-min))
+        (re-search-forward "\n\n") ;; Skip HTTP headers
+        (let* ((json-text (buffer-substring-no-properties (point) (point-max))))
+          (decode-coding-string json-text 'utf-8)
+          (json-parse-string json-text :object-type 'alist))))))
+
+(defun departure-times--get-stops (string)
+  "Get stops with name that contain STRING."
+  (let* ((res (departure-times--search-stops string))
+         (features (cdr (assoc 'features res)))
+         (stops (mapcar (lambda (item) (let* ((props (cdr (assoc 'properties item)))
+                                              (id (cdr (assoc 'id props)))
+                                              (label (cdr (assoc 'label props))))
+                                         (cons label id))) features)))
+    stops))
+
 (defun departure-times--fetch-departure-times (stop-id)
   "Fetch departure times for STOP-ID."
   (let* ((url-request-method "POST")
@@ -82,11 +106,9 @@
   "Get line number from LINE-ID."
   (car (last (split-string line-id ":"))))
 
-(defun departure-time--select-stop ()
-  "Select stop."
-  (let* ((choices '(("Klosterheim" . "NSR:StopPlace:6111")
-                    ("Bryn skole" . "NSR:StopPlace:6114")))
-         (selection (completing-read "Select stop: " choices nil t)))
+(defun departure-time--select-stop (choices)
+  "Select stop from CHOICES."
+  (let* ((selection (completing-read "Select stop: " choices nil t)))
     (cdr (assoc selection choices))))
 
 (defun departure-times-show-departures (arg)
@@ -101,7 +123,9 @@ With a prefix ARG, select a new station."
   ;; Klosterheim 6111
   ;; Bryn skole 6114
   (let* ((stop (if (/= arg 1)
-                   (departure-time--select-stop)
+                   (let* ((user-input (read-string "Stop name: "))
+                          (choices (departure-times--get-stops user-input)))
+                     (departure-time--select-stop choices))
                  "NSR:StopPlace:337"))
          (buffer-name "*Departure times*")
          (departures (departure-times--fetch-departure-times stop)))
