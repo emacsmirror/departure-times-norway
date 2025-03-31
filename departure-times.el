@@ -8,7 +8,7 @@
 ;; Version: 0.0.1
 ;; Keywords: transport
 ;; Homepage: https://github.com/hsolg/emacs-departure-times
-;; Package-Requires: ((emacs "27.1"))
+;; Package-Requires: ((emacs "27.1") (persist "0.6.1"))
 ;;
 ;; This file is not part of GNU Emacs.
 ;;
@@ -22,6 +22,9 @@
 (require 'url)
 (require 'evil)
 (require 'iso8601)
+(require 'persist)
+
+(persist-defvar departure-times-selected-stop "" "Selected stop ID")
 
 (define-derived-mode departure-times-mode special-mode "Departure times"
   "Major mode for displaying public transport departure times.")
@@ -106,10 +109,17 @@
   "Get line number from LINE-ID."
   (car (last (split-string line-id ":"))))
 
-(defun departure-time--select-stop (choices)
+(defun departure-times--select-stop (choices)
   "Select stop from CHOICES."
   (let* ((selection (completing-read "Select stop: " choices nil t)))
     (cdr (assoc selection choices))))
+
+(defun departure-times--prompt-stop ()
+  "Prompt the user for a stop."
+  (let* ((user-input (read-string "Stop name: "))
+         (choices (departure-times--get-stops user-input))
+         (selected-stop-id (departure-times--select-stop choices)))
+    selected-stop-id))
 
 (defun departure-times-show-departures (arg)
   "Show departure times for a preset stop.
@@ -122,13 +132,13 @@ With a prefix ARG, select a new station."
   ;; Jernbanetorget 3978, 3986, 3990, 3995, 4000, 4004, 4013, 59734, 61733, 62091, 62122
   ;; Klosterheim 6111
   ;; Bryn skole 6114
-  (let* ((stop (if (/= arg 1)
-                   (let* ((user-input (read-string "Stop name: "))
-                          (choices (departure-times--get-stops user-input)))
-                     (departure-time--select-stop choices))
-                 "NSR:StopPlace:337"))
+  (let* ((stop (if (or (/= arg 1) (not departure-times-selected-stop))
+                   (departure-times--prompt-stop)
+                 departure-times-selected-stop))
          (buffer-name "*Departure times*")
          (departures (departure-times--fetch-departure-times stop)))
+    (setq departure-times-selected-stop stop)
+    (persist-save 'departure-times-selected-stop)
     (with-current-buffer-window buffer-name nil nil
       (departure-times-mode)
       (let ((inhibit-read-only t))
