@@ -160,6 +160,7 @@ With a prefix ARG, select a new station."
                                           (departure-times--format-line line)
                                           destination)
                                   'face '(:height 1.2)))))
+          (insert "\nData made available by Entur")
           (goto-char (point-min)))))
     (pop-to-buffer buffer-name)))
 
