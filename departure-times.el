@@ -20,7 +20,6 @@
 
 (require 'json)
 (require 'url)
-(require 'evil)
 (require 'iso8601)
 (require 'persist)
 
