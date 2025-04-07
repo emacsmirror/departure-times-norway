@@ -23,7 +23,7 @@
 (require 'iso8601)
 (require 'persist)
 
-(persist-defvar departure-times-selected-stop "" "Selected stop ID")
+(persist-defvar departure-times-selected-stop nil "Selected stop ID")
 
 (define-derived-mode departure-times-mode special-mode "Departure times"
   "Major mode for displaying public transport departure times.")
