@@ -1,4 +1,4 @@
-;;; departure-times.el --- Description -*- lexical-binding: t; -*-
+;;; departure-times-norway.el --- Description -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) 2025 Henrik Solgaard
 ;;
@@ -7,7 +7,7 @@
 ;; Created: March 28, 2025
 ;; Version: 0.0.1
 ;; Keywords: transport
-;; Homepage: https://github.com/hsolg/emacs-departure-times
+;; Homepage: https://github.com/hsolg/emacs-departure-times-norway
 ;; Package-Requires: ((emacs "27.1") (persist "0.6.1"))
 ;;
 ;; This file is not part of GNU Emacs.
@@ -23,9 +23,9 @@
 (require 'iso8601)
 (require 'persist)
 
-(persist-defvar departure-times-selected-stop nil "Selected stop ID")
+(persist-defvar departure-times-norway-selected-stop nil "Selected stop ID")
 
-(define-derived-mode departure-times-mode special-mode "Departure times"
+(define-derived-mode departure-times-norway-mode special-mode "Departure times"
   "Major mode for displaying public transport departure times.")
 
 ;; GraphQL request:
@@ -49,11 +49,11 @@
 ;;   aimedDepartureTime
 ;; }
 
-(defun departure-times--search-stops (string)
+(defun departure-times-norway--search-stops (string)
   "Search for stop names that contain STRING with EnTur API."
   (let* ((url-request-method "GET")
          (url (format "https://api.entur.io/geocoder/v1/autocomplete?text=%s&lang=en" string))
-         (url-request-extra-headers '(("Et-Client-Name" . "emacs-departure-times")))
+         (url-request-extra-headers '(("Et-Client-Name" . "emacs-departure-times-norway")))
          (buffer (url-retrieve-synchronously url)))
     (when buffer
       (with-current-buffer buffer
@@ -63,9 +63,9 @@
           (decode-coding-string json-text 'utf-8)
           (json-parse-string json-text :object-type 'alist))))))
 
-(defun departure-times--get-stops (string)
+(defun departure-times-norway--get-stops (string)
   "Get stops with name that contain STRING."
-  (let* ((res (departure-times--search-stops string))
+  (let* ((res (departure-times-norway--search-stops string))
          (features (cdr (assoc 'features res)))
          (stops (mapcar (lambda (item) (let* ((props (cdr (assoc 'properties item)))
                                               (id (cdr (assoc 'id props)))
@@ -73,11 +73,11 @@
                                          (cons label id))) features)))
     stops))
 
-(defun departure-times--fetch-departure-times (stop-id)
+(defun departure-times-norway--fetch-departure-times-norway (stop-id)
   "Fetch departure times for STOP-ID."
   (let* ((url-request-method "POST")
          (url "https://api.entur.io/journey-planner/v3/graphql")
-         (url-request-extra-headers '(("Et-Client-Name" . "emacs-departure-times")
+         (url-request-extra-headers '(("Et-Client-Name" . "emacs-departure-times-norway")
                                       ("Content-Type" . "application/json")))
          (query (format "{ stopPlace(id: \"%s\") { id name estimatedCalls(timeRange: 72100, numberOfDepartures: 10) { realtime expectedDepartureTime forBoarding destinationDisplay { frontText } serviceJourney { journeyPattern { line { id name transportMode } } } aimedDepartureTime } } }" stop-id))
          (url-request-data (json-encode `(("query" . ,query))))
@@ -90,12 +90,12 @@
           (decode-coding-string json-text 'utf-8)
           (json-parse-string json-text :object-type 'alist))))))
 
-(defun departure-times--format-time (iso-time)
+(defun departure-times-norway--format-time (iso-time)
   "Format ISO-TIME as local time."
   (let* ((decoded-time (iso8601-parse iso-time)))
     (format-time-string "%H:%M:%S" (apply 'encode-time decoded-time))))
 
-(defun departure-times--format-mode (mode)
+(defun departure-times-norway--format-mode (mode)
   "Get icon for MODE."
   (pcase mode
     ("bus" "🚌")
@@ -104,23 +104,23 @@
     ("rail" "🚆")
     (_ mode)))
 
-(defun departure-times--format-line (line-id)
+(defun departure-times-norway--format-line (line-id)
   "Get line number from LINE-ID."
   (car (last (split-string line-id ":"))))
 
-(defun departure-times--select-stop (choices)
+(defun departure-times-norway--select-stop (choices)
   "Select stop from CHOICES."
   (let* ((selection (completing-read "Select stop: " choices nil t)))
     (cdr (assoc selection choices))))
 
-(defun departure-times--prompt-stop ()
+(defun departure-times-norway--prompt-stop ()
   "Prompt the user for a stop."
   (let* ((user-input (read-string "Stop name: "))
-         (choices (departure-times--get-stops user-input))
-         (selected-stop-id (departure-times--select-stop choices)))
+         (choices (departure-times-norway--get-stops user-input))
+         (selected-stop-id (departure-times-norway--select-stop choices)))
     selected-stop-id))
 
-(defun departure-times-show-departures (arg)
+(defun departure-times-norway-show-departures (arg)
   "Show departure times for a preset stop.
 
 With a prefix ARG, select a new station."
@@ -131,15 +131,15 @@ With a prefix ARG, select a new station."
   ;; Jernbanetorget 3978, 3986, 3990, 3995, 4000, 4004, 4013, 59734, 61733, 62091, 62122
   ;; Klosterheim 6111
   ;; Bryn skole 6114
-  (let* ((stop (if (or (/= arg 1) (not departure-times-selected-stop))
-                   (departure-times--prompt-stop)
-                 departure-times-selected-stop))
+  (let* ((stop (if (or (/= arg 1) (not departure-times-norway-selected-stop))
+                   (departure-times-norway--prompt-stop)
+                 departure-times-norway-selected-stop))
          (buffer-name "*Departure times*")
-         (departures (departure-times--fetch-departure-times stop)))
-    (setq departure-times-selected-stop stop)
-    (persist-save 'departure-times-selected-stop)
+         (departures (departure-times-norway--fetch-departure-times-norway stop)))
+    (setq departure-times-norway-selected-stop stop)
+    (persist-save 'departure-times-norway-selected-stop)
     (with-current-buffer-window buffer-name nil nil
-      (departure-times-mode)
+      (departure-times-norway-mode)
       (let ((inhibit-read-only t))
         (erase-buffer)
         (let* ((stop-place (alist-get 'stopPlace (alist-get 'data departures)))
@@ -154,21 +154,21 @@ With a prefix ARG, select a new station."
                    (line (alist-get 'id (alist-get 'line (alist-get 'journeyPattern (alist-get 'serviceJourney call)))))
                    (mode (alist-get 'transportMode (alist-get 'line (alist-get 'journeyPattern (alist-get 'serviceJourney call))))))
               (insert (propertize (format "%s\t%s\t%s\t%s\n"
-                                          (departure-times--format-time expectedDepartureTime)
-                                          (departure-times--format-mode mode)
-                                          (departure-times--format-line line)
+                                          (departure-times-norway--format-time expectedDepartureTime)
+                                          (departure-times-norway--format-mode mode)
+                                          (departure-times-norway--format-line line)
                                           destination)
                                   'face '(:height 1.2)))))
           (insert "\nData made available by Entur")
           (goto-char (point-min)))))
     (pop-to-buffer buffer-name)))
 
-(defmacro departure-times--comment (&rest _body)
+(defmacro departure-times-norway--comment (&rest _body)
   "Ignore body expressions. For temporary commenting of code blocks."
   nil)
 
-(departure-times--comment
- (departure-times-show-departures))
+(departure-times-norway--comment
+ (departure-times-norway-show-departures))
 
-(provide 'departure-times)
-;;; departure-times.el ends here
+(provide 'departure-times-norway)
+;;; departure-times-norway.el ends here
