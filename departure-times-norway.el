@@ -121,7 +121,7 @@
     selected-stop-id))
 
 (defun departure-times-norway-show-departures (arg)
-  "Show departure times for a preset stop.
+  "Show departure times for a selected stop.
 
 With a prefix ARG, select a new station."
   (interactive "p")
