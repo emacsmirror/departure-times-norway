@@ -6,6 +6,8 @@
 
 ~departure-times-norway~ is an Emacs package that displays public transport departure times in Norway.
 
+[[./departure-times-nationaltheatret.png]]
+
 * Installation
 
 ** Using MELPA (the package is not available from MELPA yet!)
