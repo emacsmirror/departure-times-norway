@@ -23,6 +23,8 @@
 ;;  select a new stop, invoke the command with a prefix argument (typically
 ;;  C-u) to display the search prompt again.
 ;;
+;; Data made available by Entur.
+;;
 ;;; Code:
 
 (require 'json)
