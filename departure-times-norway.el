@@ -1,16 +1,15 @@
 ;;; departure-times-norway.el --- Description -*- lexical-binding: t; -*-
-;;
+
 ;; Copyright (C) 2025 Henrik Solgaard
-;;
+
 ;; Author: Henrik Solgaard <henrik.solgaard@gmail.com>
 ;; Maintainer: Henrik Solgaard <henrik.solgaard@gmail.com>
 ;; Created: March 28, 2025
 ;; Version: 0.0.1
-;; Keywords: transport
 ;; Homepage: https://github.com/hsolg/emacs-departure-times-norway
 ;; Package-Requires: ((emacs "27.1") (persist "0.6.1"))
 ;; License: GPL-3+
-;;
+
 ;; This file is not part of GNU Emacs.
 
 ;; This program is free software: you can redistribute it and/or modify it under
@@ -28,17 +27,17 @@
 
 ;;; Commentary:
 ;;
-;;  Show public transport departure times
+;; Show public transport departure times
 ;;
-;;  The command departure-times-norway-show-departures displays the next
-;;  departures from a public transport stop. The first time the command
-;;  is invoked, it will display a search prompt in the minibuffer. The
-;;  next time it is invoked, it will remember the previous selection. To
-;;  select a new stop, invoke the command with a prefix argument (typically
-;;  C-u) to display the search prompt again.
+;; The command departure-times-norway-show-departures displays the next
+;; departures from a public transport stop. The first time the command
+;; is invoked, it will display a search prompt in the minibuffer. The
+;; next time it is invoked, it will remember the previous selection. To
+;; select a new stop, invoke the command with a prefix argument (typically
+;; C-u) to display the search prompt again.
 ;;
 ;; Data made available by Entur.
-;;
+
 ;;; Code:
 
 (require 'json)
