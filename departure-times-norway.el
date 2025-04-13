@@ -9,6 +9,7 @@
 ;; Keywords: transport
 ;; Homepage: https://github.com/hsolg/emacs-departure-times-norway
 ;; Package-Requires: ((emacs "27.1") (persist "0.6.1"))
+;; License: GPL-3+
 ;;
 ;; This file is not part of GNU Emacs.
 ;;
