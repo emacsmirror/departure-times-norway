@@ -66,10 +66,10 @@
 (defun departure-times-norway--get-stops (string)
   "Get stops with name that contain STRING."
   (let* ((res (departure-times-norway--search-stops string))
-         (features (cdr (assoc 'features res)))
-         (stops (mapcar (lambda (item) (let* ((props (cdr (assoc 'properties item)))
-                                              (id (cdr (assoc 'id props)))
-                                              (label (cdr (assoc 'label props))))
+         (features (alist-get 'features res))
+         (stops (mapcar (lambda (item) (let* ((props (alist-get 'properties item))
+                                              (id (alist-get 'id props))
+                                              (label (alist-get 'label props)))
                                          (cons label id))) features)))
     stops))
 
