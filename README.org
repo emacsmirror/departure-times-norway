@@ -26,27 +26,39 @@
    (package-install 'departure-times-norway)
    #+end_src
 
+3. Configure the package:
+
+#+begin_src emacs-lisp
+(use-package departure-times-norway
+  ;; Enable auto-loading (redundant if the command is bound to a key)
+  :commands (departure-times-norway-show-departures)
+  ;; Add key binding (optional)
+  :bind (("C-c d" . departure-times-norway-show-departures)))
+#+end_src
+
 ** Using Doom Emacs
 
-Add ~departure-times-norway~ to your ~packages.el~:
+1. Add ~departure-times-norway~ to your ~packages.el~:
 
 #+begin_src emacs-lisp
 (package! departure-times-norway :recipe (:host github :repo "hsolg/emacs-departure-times-norway"))
 #+end_src
 
-Then run:
+2. Sync Doom packages:
 
 #+begin_src shell
 doom sync
 #+end_src
 
-Restart Emacs or run ~M-x doom/reload~.
+3. Restart Emacs or run ~M-x doom/reload~.
 
-Configure the package:
+4. Configure the package:
 
 #+begin_src emacs-lisp
 (use-package! departure-times-norway
+  ;; Enable auto-loading
   :commands (departure-times-norway-show-departures)
+
   :init
   ;; Add key binding (optional)
   (map! :leader
