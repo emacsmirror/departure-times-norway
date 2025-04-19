@@ -30,7 +30,7 @@
 
 #+begin_src emacs-lisp
 (use-package departure-times-norway
-  ;; Enable auto-loading (redundant if the command is bound to a key)
+  ;; Enable auto-loading (redundant if the command is bound to a key below)
   :commands (departure-times-norway-show-departures)
   ;; Add key binding (optional)
   :bind (("C-c d" . departure-times-norway-show-departures)))
