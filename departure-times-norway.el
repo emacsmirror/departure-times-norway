@@ -183,7 +183,9 @@ With a prefix ARG, select a new station."
                                   'face '(:height 1.2)))))
           (insert "\nData made available by Entur")
           (goto-char (point-min)))))
-    (pop-to-buffer buffer-name)))
+    (pop-to-buffer buffer-name)
+    (message "To select a different stop, invoke with a prefix argument")
+    (run-at-time "3 sec" nil #'message nil)))
 
 (defmacro departure-times-norway--comment (&rest _body)
   "Ignore body expressions. For temporary commenting of code blocks."
