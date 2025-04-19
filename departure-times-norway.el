@@ -168,6 +168,8 @@ With a prefix ARG, select a new station."
                (stop-name (alist-get 'name stop-place))
                (calls (alist-get 'estimatedCalls stop-place)))
           (insert (propertize (format "%s\n" stop-name) 'face '(:height 2.0)))
+          (unless (display-graphic-p)
+            (insert "\n"))
           (dotimes (i (length calls))
             (let* ((call (aref calls i))
                    ;; (realtime (alist-get 'realtime call))
