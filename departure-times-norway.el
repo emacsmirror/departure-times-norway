@@ -140,6 +140,8 @@
   (let* ((user-input (read-string "Stop name: "))
          (choices (departure-times-norway--get-stops user-input))
          (selected-stop-id (departure-times-norway--select-stop choices)))
+    (setq departure-times-norway-selected-stop selected-stop-id)
+    (persist-save 'departure-times-norway-selected-stop)
     selected-stop-id))
 
 (defun departure-times-norway-show-departures (arg)
@@ -158,8 +160,6 @@ With a prefix ARG, select a new station."
                  departure-times-norway-selected-stop))
          (buffer-name "*Departure times*")
          (departures (departure-times-norway--fetch-departure-times-norway stop)))
-    (setq departure-times-norway-selected-stop stop)
-    (persist-save 'departure-times-norway-selected-stop)
     (with-current-buffer-window buffer-name nil nil
       (departure-times-norway-mode)
       (let ((inhibit-read-only t))
