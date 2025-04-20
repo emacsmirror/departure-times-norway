@@ -10,7 +10,7 @@
 
 * Installation
 
-** Using MELPA (the package is not available from MELPA yet!)
+** Using MELPA
 
 1. Ensure MELPA is added to your package archives:
 
