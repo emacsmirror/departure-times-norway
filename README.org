@@ -2,6 +2,8 @@
 #+AUTHOR: Henrik Solgaard
 #+OPTIONS: toc:nil
 
+[[https://www.melpa.org/#/departure-times-norway][file:https://www.melpa.org/packages/departure-times-norway-badge.svg]]
+
 * Overview
 
 ~departure-times-norway~ is an Emacs package that displays public transport departure times in Norway.
