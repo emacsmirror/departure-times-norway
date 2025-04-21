@@ -115,7 +115,7 @@
 (defun departure-times-norway--format-time (iso-time)
   "Format ISO-TIME as local time."
   (let* ((decoded-time (iso8601-parse iso-time)))
-    (format-time-string "%T" (apply 'encode-time decoded-time))))
+    (format-time-string "%T" (apply #'encode-time decoded-time))))
 
 (defun departure-times-norway--format-mode (mode)
   "Get icon for MODE."
