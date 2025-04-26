@@ -1,4 +1,4 @@
-;;; departure-times-norway.el --- Description -*- lexical-binding: t; -*-
+;;; departure-times-norway.el --- Display public transport departure times in Norway -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 Henrik Solgaard
 
