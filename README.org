@@ -8,7 +8,9 @@
 
 ~departure-times-norway~ is an Emacs package that displays public transport departure times in Norway.
 
-[[./screenshots/departure-times-nationaltheatret.png]]
+[[./screenshots/departure-times-nationaltheatret-gui.png]]
+
+[[./screenshots/departure-times-nationaltheatret-tui.png]]
 
 * Installation
 
